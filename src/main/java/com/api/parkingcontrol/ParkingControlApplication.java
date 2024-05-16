@@ -13,4 +13,9 @@ public class ParkingControlApplication {
         SpringApplication.run(ParkingControlApplication.class, args);
 
     }
+
+    @GetMapping("/a")
+    public String index() {
+        return "Hello world!";
+    }
 }
