@@ -4,10 +4,13 @@ import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.repositories.ParkingSpotRepository;
 import jakarta.transaction.Transactional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,8 +25,27 @@ public class ParkingSpotService {
     }
 
     @Transactional
-    public Object save(ParkingSpotModel parkingSpotModel) {
+    public ParkingSpotModel save(ParkingSpotModel parkingSpotModel) {
+        this.validateParkingSpot(parkingSpotModel);
         return parkingSpotRepository.save(parkingSpotModel);
+    }
+
+    private void validateParkingSpot(ParkingSpotModel parkingSpotModel) {
+        String licensePlate = parkingSpotModel.getLicensePlateCar();
+        for(Field field: parkingSpotModel.getClass().getDeclaredFields()){
+            field.setAccessible(true);
+            try{
+                Object value = field.get(parkingSpotModel);
+                if(value == null && !field.getName().equals("id")){
+                    throw new DataIntegrityViolationException(field.getName() + " cannot be null or empty");
+                }
+
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
     }
 
     public boolean existsByLicensePlateCar(String licensePlateCar) {
