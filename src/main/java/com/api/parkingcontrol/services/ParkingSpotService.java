@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,11 +20,9 @@ public class ParkingSpotService {
 
     final ParkingSpotRepository parkingSpotRepository;
 
-
     public ParkingSpotService(ParkingSpotRepository parkingSpotRepository) {
         this.parkingSpotRepository = parkingSpotRepository;
     }
-
     @Transactional
     public ParkingSpotModel save(ParkingSpotModel parkingSpotModel) {
         this.validateParkingSpot(parkingSpotModel);
@@ -43,9 +42,7 @@ public class ParkingSpotService {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-
         }
-
     }
 
     public boolean existsByLicensePlateCar(String licensePlateCar) {
@@ -70,6 +67,10 @@ public class ParkingSpotService {
     @Transactional
     public void delete(ParkingSpotModel parkingSpotModel) {
         parkingSpotRepository.delete(parkingSpotModel);
+    }
+
+    public Optional<List<ParkingSpotModel>> findByResponsibleName(String name){
+        return parkingSpotRepository.findByResponsibleName(name);
     }
 
 }

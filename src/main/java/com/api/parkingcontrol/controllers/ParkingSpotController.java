@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,5 +88,14 @@ public class ParkingSpotController {
         parkingSpotModel.setRegistrationDate(parkingSpotModelOptional.get().getRegistrationDate());
 
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotModel));
+    }
+
+    @GetMapping("/responsible-name/{name}")
+    public ResponseEntity<Object> findByResponsibleName(@PathVariable String name) {
+        Optional<List<ParkingSpotModel>> responsibleName = parkingSpotService.findByResponsibleName(name);
+        if (responsibleName.get().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Responsible Name not found");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responsibleName.get());
     }
 }
