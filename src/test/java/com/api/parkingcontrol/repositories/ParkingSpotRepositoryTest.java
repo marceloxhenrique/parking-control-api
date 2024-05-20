@@ -49,7 +49,6 @@ class ParkingSpotRepositoryTest {
     @Test
     @DisplayName("License plate car should exist")
     void findLicensePlateCar() {
-        //createNewParkingSpotModel(parkingSpotDto);
         assertThat(parkingSpotRepository.existsByLicensePlateCar(
                 savedParkingSpotModel.getLicensePlateCar())
         ).isTrue();

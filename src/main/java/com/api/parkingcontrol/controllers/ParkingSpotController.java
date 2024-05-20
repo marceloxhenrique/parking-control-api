@@ -3,6 +3,8 @@ package com.api.parkingcontrol.controllers;
 import com.api.parkingcontrol.dtos.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.services.ParkingSpotService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -23,13 +25,14 @@ import java.util.UUID;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/parking-spot")
+@Tag(name = "Parking Spot", description = "The Parking Spot API")
 public class ParkingSpotController {
     final ParkingSpotService parkingSpotService;
 
     public ParkingSpotController(ParkingSpotService parkingSpotService) {
         this.parkingSpotService = parkingSpotService;
     }
-
+    @Operation(summary = "Add a new parking spot", description = "Create a new parking spot")
     @PostMapping
     public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) {
         if (parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
@@ -49,14 +52,14 @@ public class ParkingSpotController {
         parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
         return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
     }
-
+    @Operation(summary = "Get a parking spot", description = "Retrieve a parking spot be ID")
     @GetMapping
     public ResponseEntity<Page<ParkingSpotModel>> getAllParkingSpots(@PageableDefault(
             page = 0, size = 10, sort = "id",
             direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll(pageable));
     }
-
+    @Operation(summary = "Get all parking spots (paginated)", description = "Retrieve a page of all parking spots available with sorting, filtering options")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneParkingSpot(@PathVariable UUID id) {
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
@@ -64,7 +67,7 @@ public class ParkingSpotController {
                 ResponseEntity.status(HttpStatus.OK).body(parkingSpotModel)).orElseGet(() ->
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking spot not found"));
     }
-
+    @Operation(summary = "Delete parking spot", description = "Delete a parking spot by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteParkingSpot(@PathVariable UUID id) {
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
@@ -75,7 +78,7 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.OK).body("Parking spot deleted successfully");
 
     }
-
+    @Operation(summary = "Update an existing parking spot", description = "Update an existing parking spot by id")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateParkingSpot(@PathVariable UUID id, @RequestBody ParkingSpotDto parkingSpotDto) {
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
@@ -89,7 +92,7 @@ public class ParkingSpotController {
 
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotModel));
     }
-
+    @Operation(summary = "Find a parking spot by name", description = "Find an specific parking spot by responsible name")
     @GetMapping("/responsible-name/{name}")
     public ResponseEntity<Object> findByResponsibleName(@PathVariable String name) {
         Optional<List<ParkingSpotModel>> responsibleName = parkingSpotService.findByResponsibleName(name);
