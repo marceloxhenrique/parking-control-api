@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -70,6 +69,7 @@ public class ParkingSpotService {
     }
 
     public Optional<List<ParkingSpotModel>> findByResponsibleName(String name){
+        //here goes the query??
         return parkingSpotRepository.findByResponsibleName(name);
     }
 

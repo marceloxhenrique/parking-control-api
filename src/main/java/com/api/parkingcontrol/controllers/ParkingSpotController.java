@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ public class ParkingSpotController {
         this.parkingSpotService = parkingSpotService;
     }
     @Operation(summary = "Add a new parking spot", description = "Create a new parking spot")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto) {
         if (parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
@@ -53,6 +55,7 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
     }
     @Operation(summary = "Get a parking spot", description = "Retrieve a parking spot be ID")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping
     public ResponseEntity<Page<ParkingSpotModel>> getAllParkingSpots(@PageableDefault(
             page = 0, size = 10, sort = "id",
@@ -60,6 +63,7 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll(pageable));
     }
     @Operation(summary = "Get all parking spots (paginated)", description = "Retrieve a page of all parking spots available with sorting, filtering options")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneParkingSpot(@PathVariable UUID id) {
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
@@ -68,6 +72,7 @@ public class ParkingSpotController {
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking spot not found"));
     }
     @Operation(summary = "Delete parking spot", description = "Delete a parking spot by id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteParkingSpot(@PathVariable UUID id) {
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
@@ -79,6 +84,7 @@ public class ParkingSpotController {
 
     }
     @Operation(summary = "Update an existing parking spot", description = "Update an existing parking spot by id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateParkingSpot(@PathVariable UUID id, @RequestBody ParkingSpotDto parkingSpotDto) {
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
@@ -93,6 +99,7 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotModel));
     }
     @Operation(summary = "Find a parking spot by name", description = "Find an specific parking spot by responsible name")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/responsible-name/{name}")
     public ResponseEntity<Object> findByResponsibleName(@PathVariable String name) {
         Optional<List<ParkingSpotModel>> responsibleName = parkingSpotService.findByResponsibleName(name);
