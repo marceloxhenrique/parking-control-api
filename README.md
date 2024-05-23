@@ -14,7 +14,7 @@ This project provides a REST API for managing parking spot availability and acce
 
 ## Getting Started
 
-First, clone the repository
+First, clone the repository:
 
 ```shell
 git clone https://git@github.com:marceloxhenrique/parking-control-api.git
@@ -53,3 +53,4 @@ mvn spring-boot:run
 ```shell
 http://localhost:8080/swagger-ui/index.html
 ```
+![Capture d’écran 2024-05-23 à 15 02 18](https://github.com/marceloxhenrique/parking-control-api/assets/91223682/e6c596b9-4370-41a8-87b5-b52524a5b027)
